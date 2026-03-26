@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gartic Phone 🎨</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1928;
+    --surface2: #252438;
+    --accent: #ff6b6b;
+    --accent2: #ffd93d;
+    --accent3: #6bcb77;
+    --accent4: #4d96ff;
+    --text: #fffffe;
+    --muted: #a7a9be;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image: radial-gradient(ellipse at 20% 50%, rgba(255,107,107,0.07) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 20%, rgba(77,150,255,0.07) 0%, transparent 60%);
+  }
+
+  h1.logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .screen { width: 100%; max-width: 520px; animation: fadeIn 0.4s ease; }
+  .screen.wide { max-width: 900px; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--accent2);
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 12px;
+  }
+  input[type="text"]:focus { border-color: var(--accent4); }
+  input[type="text"]::placeholder { color: var(--muted); font-weight: 400; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    letter-spacing: 0.3px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: white; width: 100%; margin-top: 4px; }
+  .btn-primary:hover { background: #ff4f4f; box-shadow: 0 4px 20px rgba(255,107,107,0.4); }
+  .btn-secondary { background: var(--accent4); color: white; width: 100%; }
+  .btn-secondary:hover { background: #2d7ff9; box-shadow: 0 4px 20px rgba(77,150,255,0.4); }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 8px 16px;
+  }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.35); color: var(--text); }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 16px 0; color: var(--muted); font-size: 0.85rem;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+
+  .lobby-code {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem; letter-spacing: 12px;
+    color: var(--accent2); text-align: center;
+    padding: 16px; background: var(--surface2);
+    border-radius: 12px; margin-bottom: 8px;
+    cursor: pointer; transition: background 0.2s;
+    user-select: none;
+  }
+  .lobby-code:hover { background: #2e2c46; }
+  .lobby-code-hint { text-align: center; color: var(--muted); font-size: 0.8rem; margin-bottom: 20px; }
+
+  .player-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .player-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border-radius: 100px;
+    padding: 6px 14px 6px 8px; font-weight: 700; font-size: 0.9rem;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .player-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 800;
+  }
+
+  .prompt-area { position: relative; margin-bottom: 14px; }
+  .prompt-area textarea {
+    width: 100%; background: var(--surface2);
+    border: 2px solid rgba(255,255,255,0.08); border-radius: 10px;
+    padding: 14px 16px; color: var(--text);
+    font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 600;
+    outline: none; resize: none; height: 90px; transition: border-color 0.2s;
+  }
+  .prompt-area textarea:focus { border-color: var(--accent4); }
+  .char-count { position: absolute; bottom: 10px; right: 14px; font-size: 0.75rem; color: var(--muted); }
+
+  #drawCanvas {
+    border-radius: 12px; background: white; cursor: crosshair;
+    touch-action: none; display: block; max-width: 100%;
+  }
+  .canvas-wrapper { display: flex; flex-direction: column; gap: 14px; }
+  .canvas-row { display: flex; gap: 14px; align-items: flex-start; }
+
+  .toolbar {
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--surface2); border-radius: 12px; padding: 12px;
+    min-width: 52px; align-items: center;
+  }
+  .tool-btn {
+    width: 38px; height: 38px; border-radius: 8px; border: 2px solid transparent;
+    background: var(--surface); color: var(--text); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: all 0.15s;
+  }
+  .tool-btn:hover { background: rgba(255,255,255,0.1); }
+  .tool-btn.active { border-color: var(--accent4); background: rgba(77,150,255,0.15); }
+
+  .color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin-top: 4px; }
+  .color-swatch {
+    width: 18px; height: 18px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: transform 0.15s;
+  }
+  .color-swatch:hover { transform: scale(1.2); }
+  .color-swatch.active { border-color: white; transform: scale(1.15); }
+
+  .size-slider-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 6px; }
+  .size-slider-wrap input[type=range] {
+    -webkit-appearance: none; width: 70px; height: 4px;
+    border-radius: 2px; background: var(--surface); outline: none;
+    transform: rotate(-90deg); transform-origin: 35px 35px; margin-top: 44px;
+  }
+  .size-slider-wrap input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent4); cursor: pointer;
+  }
+
+  .prompt-display {
+    background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(77,150,255,0.1));
+    border: 1px solid rgba(255,107,107,0.3); border-radius: 12px;
+    padding: 14px 20px; text-align: center; margin-bottom: 16px;
+  }
+  .prompt-display .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .prompt-display .text { font-size: 1.2rem; font-weight: 800; color: var(--accent2); margin-top: 4px; }
+
+  .timer-bar-wrap { background: var(--surface2); border-radius: 100px; height: 8px; overflow: hidden; margin-bottom: 6px; }
+  .timer-bar { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent3), var(--accent2)); transition: width 1s linear, background 1s; }
+  .timer-bar.urgent { background: linear-gradient(90deg, var(--accent), #ff4f4f); }
+  .timer-text { text-align: right; font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; font-weight: 700; }
+
+  .image-to-guess { border-radius: 12px; overflow: hidden; margin-bottom: 16px; background: white; }
+  .image-to-guess img { width: 100%; display: block; }
+
+  .waiting-msg { text-align: center; padding: 40px 20px; }
+  .spinner {
+    width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.1);
+    border-top-color: var(--accent4); border-radius: 50%;
+    animation: spin 0.9s linear infinite; margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .results-chain { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .chain-item {
+    background: var(--surface2); border-radius: 12px; padding: 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+    animation: fadeIn 0.5s ease both;
+  }
+  .chain-item img { width: 160px; height: 100px; object-fit: contain; border-radius: 8px; background: white; flex-shrink: 0; }
+  .chain-meta { flex: 1; }
+  .chain-player { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .chain-content { font-size: 1rem; font-weight: 700; }
+  .chain-type-badge {
+    display: inline-block; font-size: 0.7rem; padding: 2px 8px;
+    border-radius: 100px; margin-bottom: 6px; font-weight: 800; letter-spacing: 0.5px;
+  }
+  .badge-prompt { background: rgba(255,217,61,0.2); color: var(--accent2); }
+  .badge-drawing { background: rgba(77,150,255,0.2); color: var(--accent4); }
+  .badge-guess { background: rgba(107,203,119,0.2); color: var(--accent3); }
+
+  .error-msg { color: var(--accent); font-size: 0.85rem; margin-top: 6px; display: none; }
+  .round-indicator { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 14px; }
+  .round-indicator span { color: var(--text); font-weight: 800; }
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    .canvas-row { flex-direction: column; }
+    .toolbar { flex-direction: row; width: 100%; justify-content: center; flex-wrap: wrap; }
+    .size-slider-wrap input[type=range] { transform: none; margin-top: 0; width: 60px; }
+    .color-grid { grid-template-columns: repeat(6, 1fr); }
+    .chain-item { flex-direction: column; }
+    .chain-item img { width: 100%; height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screenHome" class="screen">
+  <h1 class="logo">🎨 Gartic Phone</h1>
+  <p class="subtitle">Draw. Guess. Laugh. Repeat.</p>
+  <div class="card">
+    <input type="text" id="playerName" placeholder="Your name..." maxlength="20" />
+    <p class="error-msg" id="nameError">Please enter your name!</p>
+    <button class="btn btn-primary" onclick="createLobby()">🎲 Create Lobby</button>
+    <div class="divider">or join existing</div>
+    <input type="text" id="joinCode" placeholder="Room code (e.g. ABC123)" maxlength="6" oninput="this.value=this.value.toUpperCase()" />
+    <button class="btn btn-secondary" onclick="joinLobby()">🚪 Join Game</button>
+    <p class="error-msg" id="joinError">Room not found or already started!</p>
+  </div>
+</div>
+
+<!-- LOBBY -->
+<div id="screenLobby" class="screen hidden">
+  <h1 class="logo">🎨 Gartic Phone</h1>
+  <div class="card">
+    <div class="card-title">Waiting for players...</div>
+    <div class="lobby-code" id="lobbyCodeDisplay" onclick="copyCode()"></div>
+    <div class="lobby-code-hint">📋 Click code to copy &amp; share with friends</div>
+    <div class="player-list" id="playerList"></div>
+    <div id="hostControls">
+      <button class="btn btn-primary" onclick="startGame()">🚀 Start Game</button>
+      <p style="color:var(--muted);font-size:0.8rem;margin-top:10px;text-align:center">Need at least 2 players.</p>
+    </div>
+    <div id="waitingForHost" class="hidden" style="text-align:center;color:var(--muted);padding:10px 0">Waiting for host to start...</div>
+  </div>
+</div>
+
+<!-- WRITE PROMPT -->
+<div id="screenWrite" class="screen hidden">
+  <h1 class="logo">✏️ Write a Prompt</h1>
+  <div class="card">
+    <div class="round-indicator">Round <span id="writeRound">1</span> of <span id="totalRounds">?</span></div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="writeTimerBar" style="width:100%"></div></div>
+    <div class="timer-text" id="writeTimerText">60s</div>
+    <p style="color:var(--muted);margin-bottom:14px;font-size:0.95rem">Write something fun for another player to draw!</p>
+    <div class="prompt-area">
+      <textarea id="promptInput" placeholder="A cat riding a unicorn through space..." maxlength="100"></textarea>
+      <span class="char-count" id="promptCharCount">0/100</span>
+    </div>
+    <button class="btn btn-primary" onclick="submitPrompt()">✅ Submit Prompt</button>
+    <p class="error-msg" id="promptError">Please write something first!</p>
+  </div>
+</div>
+
+<!-- DRAW -->
+<div id="screenDraw" class="screen wide hidden">
+  <h1 class="logo">🖌️ Draw It!</h1>
+  <div class="card">
+    <div class="round-indicator">Round <span id="drawRound">1</span> of <span id="drawTotalRounds">?</span></div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="drawTimerBar" style="width:100%"></div></div>
+    <div class="timer-text" id="drawTimerText">90s</div>
+    <div class="prompt-display">
+      <div class="label">Draw this:</div>
+      <div class="text" id="drawPromptText"></div>
+    </div>
+    <div class="canvas-wrapper">
+      <div class="canvas-row">
+        <canvas id="drawCanvas" width="560" height="360"></canvas>
+        <div class="toolbar">
+          <button class="tool-btn active" id="toolPen" onclick="setTool('pen')" title="Pen">✏️</button>
+          <button class="tool-btn" id="toolErase" onclick="setTool('eraser')" title="Eraser">🧹</button>
+          <button class="tool-btn" onclick="clearCanvas()" title="Clear all">🗑️</button>
+          <button class="tool-btn" onclick="undoCanvas()" title="Undo">↩️</button>
+          <div class="color-grid" id="colorGrid"></div>
+          <div class="size-slider-wrap">
+            <input type="range" id="sizeSlider" min="2" max="40" value="6" oninput="currentSize=+this.value">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="submitDrawing()">✅ Submit Drawing</button>
+  </div>
+</div>
+
+<!-- GUESS -->
+<div id="screenGuess" class="screen hidden">
+  <h1 class="logo">🤔 What is this?</h1>
+  <div class="card">
+    <div class="round-indicator">Round <span id="guessRound">1</span> of <span id="guessTotalRounds">?</span></div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="guessTimerBar" style="width:100%"></div></div>
+    <div class="timer-text" id="guessTimerText">60s</div>
+    <div class="image-to-guess"><img id="guessImage" src="" alt="Drawing to guess" /></div>
+    <div class="prompt-area">
+      <textarea id="guessInput" placeholder="Your best guess..." maxlength="100" style="height:70px"></textarea>
+      <span class="char-count" id="guessCharCount">0/100</span>
+    </div>
+    <button class="btn btn-primary" onclick="submitGuess()">✅ Submit Guess</button>
+    <p class="error-msg" id="guessError">Please write a guess!</p>
+  </div>
+</div>
+
+<!-- WAITING -->
+<div id="screenWaiting" class="screen hidden">
+  <div class="waiting-msg">
+    <div class="spinner"></div>
+    <h2 style="font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:8px">Hang tight!</h2>
+    <p style="color:var(--muted)" id="waitingText">Waiting for other players...</p>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="screenResults" class="screen wide hidden">
+  <h1 class="logo">🎉 Results!</h1>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div class="card-title" style="margin-bottom:0">Game Over!</div>
+      <button class="btn btn-outline" onclick="backToHome()">🏠 Home</button>
+    </div>
+    <div id="resultsContent"></div>
+    <button class="btn btn-primary hidden" id="playAgainBtn" onclick="playAgain()" style="margin-top:10px">🔄 Play Again</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, update, onValue, off } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// ── Firebase ────────────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyB0wUCaXCqWhDcgMOLPC_pIS4PRQLkpOrw",
+  authDomain: "gartic-phone-game-b9a00.firebaseapp.com",
+  databaseURL: "https://gartic-phone-game-b9a00-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "gartic-phone-game-b9a00",
+  storageBucket: "gartic-phone-game-b9a00.firebasestorage.app",
+  messagingSenderId: "18038938341",
+  appId: "1:18038938341:web:858f7876b097dfdec0520c"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ── State ───────────────────────────────────────────────────────────────────
+let myId = Math.random().toString(36).slice(2, 10);
+let myName = '', roomCode = '', isHost = false;
+let players = {}, currentRound = 0, totalRounds = 0;
+let roomListener = null;
+let timerInterval = null, timerMax = 60, timerLeft = 60;
+let hasSubmitted = false;
+let advancePoller = null;
+// Canvas
+let currentTool = 'pen', currentColor = '#000000', currentSize = 6;
+let isDrawingCanvas = false, lastX = 0, lastY = 0;
+let canvasCtx = null;
+let undoStack = [];
+const DRAW_TIME = 90, WRITE_TIME = 60, GUESS_TIME = 60;
+const COLORS = ['#000000','#ffffff','#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#92400e','#6b7280'];
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('[id^="screen"]').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+function genCode() { return Math.random().toString(36).slice(2,8).toUpperCase(); }
+function playerColor(name) {
+  const cs = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#f97316','#8b5cf6','#ec4899','#14b8a6'];
+  let h = 0; for (let c of name) h = (h*31+c.charCodeAt(0)) % cs.length; return cs[h];
+}
+
+window.copyCode = () => {
+  navigator.clipboard.writeText(roomCode).catch(()=>{});
+  const el = document.getElementById('lobbyCodeDisplay');
+  const old = el.textContent; el.textContent = 'Copied! ✓';
+  setTimeout(() => el.textContent = old, 1200);
+};
+
+// ── Timer ───────────────────────────────────────────────────────────────────
+function startTimer(secs, barId, txtId, onDone) {
+  clearInterval(timerInterval);
+  timerMax = secs; timerLeft = secs;
+  const bar = document.getElementById(barId), txt = document.getElementById(txtId);
+  const tick = () => {
+    bar.style.width = (timerLeft / timerMax * 100) + '%';
+    bar.classList.toggle('urgent', timerLeft <= 10);
+    txt.textContent = timerLeft + 's';
+    if (timerLeft <= 0) { clearInterval(timerInterval); onDone && onDone(); return; }
+    timerLeft--;
+  };
+  tick();
+  timerInterval = setInterval(tick, 1000);
+}
+
+// ── Canvas ──────────────────────────────────────────────────────────────────
+function initCanvas() {
+  const cv = document.getElementById('drawCanvas');
+  canvasCtx = cv.getContext('2d');
+  clearCanvas();
+
+  function pos(e) {
+    const r = cv.getBoundingClientRect();
+    const sx = cv.width / r.width, sy = cv.height / r.height;
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * sx, y: (src.clientY - r.top) * sy };
+  }
+  function startD(e) {
+    e.preventDefault();
+    isDrawingCanvas = true;
+    saveUndo();
+    const {x,y} = pos(e); lastX=x; lastY=y;
+    canvasCtx.beginPath();
+    canvasCtx.arc(x, y, (currentTool==='eraser'?currentSize*3:currentSize)/2, 0, Math.PI*2);
+    canvasCtx.fillStyle = currentTool==='eraser' ? 'white' : currentColor;
+    canvasCtx.fill();
+  }
+  function doD(e) {
+    if (!isDrawingCanvas) return; e.preventDefault();
+    const {x,y} = pos(e);
+    canvasCtx.beginPath(); canvasCtx.moveTo(lastX,lastY); canvasCtx.lineTo(x,y);
+    canvasCtx.strokeStyle = currentTool==='eraser' ? 'white' : currentColor;
+    canvasCtx.lineWidth = currentTool==='eraser' ? currentSize*3 : currentSize;
+    canvasCtx.lineCap = 'round'; canvasCtx.lineJoin = 'round';
+    canvasCtx.stroke(); lastX=x; lastY=y;
+  }
+  cv.onmousedown=startD; cv.onmousemove=doD; cv.onmouseup=()=>isDrawingCanvas=false; cv.onmouseleave=()=>isDrawingCanvas=false;
+  cv.ontouchstart=startD; cv.ontouchmove=doD; cv.ontouchend=()=>isDrawingCanvas=false;
+}
+
+function saveUndo() {
+  const cv = document.getElementById('drawCanvas');
+  undoStack.push(cv.toDataURL()); if (undoStack.length > 30) undoStack.shift();
+}
+window.undoCanvas = () => {
+  if (!undoStack.length) return;
+  const cv = document.getElementById('drawCanvas');
+  const img = new Image(); img.src = undoStack.pop();
+  img.onload = () => canvasCtx.drawImage(img, 0, 0);
+};
+window.clearCanvas = () => {
+  if (!canvasCtx) return;
+  undoStack = [];
+  canvasCtx.fillStyle = 'white';
+  canvasCtx.fillRect(0, 0, 560, 360);
+};
+window.setTool = t => {
+  currentTool = t;
+  document.getElementById('toolPen').classList.toggle('active', t==='pen');
+  document.getElementById('toolErase').classList.toggle('active', t==='eraser');
+};
+
+function buildColorGrid() {
+  const g = document.getElementById('colorGrid'); g.innerHTML = '';
+  COLORS.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (c===currentColor?' active':'');
+    sw.style.background = c;
+    if (c==='#ffffff') sw.style.boxShadow = 'inset 0 0 0 1px rgba(255,255,255,0.25)';
+    sw.onclick = () => {
+      currentColor = c; setTool('pen');
+      document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));
+      sw.classList.add('active');
+    };
+    g.appendChild(sw);
+  });
+}
+// expose for range input
+window.currentSize = currentSize;
+
+// ── Create / Join ───────────────────────────────────────────────────────────
+window.createLobby = async () => {
+  myName = document.getElementById('playerName').value.trim();
+  if (!myName) { document.getElementById('nameError').style.display='block'; return; }
+  document.getElementById('nameError').style.display='none';
+  isHost = true; roomCode = genCode();
+  await set(ref(db, `rooms/${roomCode}`), {
+    host: myId, status: 'lobby',
+    players: { [myId]: { name: myName } }
+  });
+  enterLobby();
+};
+window.joinLobby = async () => {
+  myName = document.getElementById('playerName').value.trim();
+  if (!myName) { document.getElementById('nameError').style.display='block'; return; }
+  document.getElementById('nameError').style.display='none';
+  const code = document.getElementById('joinCode').value.trim().toUpperCase();
+  if (!code) { document.getElementById('joinError').style.display='block'; return; }
+  const snap = await get(ref(db, `rooms/${code}`));
+  if (!snap.exists() || snap.val().status !== 'lobby') {
+    document.getElementById('joinError').style.display='block'; return;
+  }
+  roomCode = code; isHost = false;
+  await update(ref(db, `rooms/${roomCode}/players`), { [myId]: { name: myName } });
+  enterLobby();
+};
+
+function enterLobby() {
+  show('screenLobby');
+  document.getElementById('lobbyCodeDisplay').textContent = roomCode;
+  document.getElementById('hostControls').classList.toggle('hidden', !isHost);
+  document.getElementById('waitingForHost').classList.toggle('hidden', isHost);
+  listenRoom();
+}
+
+function renderPlayerList() {
+  const list = document.getElementById('playerList'); list.innerHTML = '';
+  Object.entries(players).forEach(([id, p]) => {
+    const chip = document.createElement('div'); chip.className = 'player-chip';
+    const av = document.createElement('div'); av.className = 'player-avatar';
+    av.style.background = playerColor(p.name); av.textContent = p.name[0].toUpperCase();
+    chip.appendChild(av);
+    chip.appendChild(document.createTextNode(p.name + (id===myId ? ' (you)' : '')));
+    list.appendChild(chip);
+  });
+}
+
+// ── Start ───────────────────────────────────────────────────────────────────
+window.startGame = async () => {
+  const pids = Object.keys(players);
+  if (pids.length < 2) { alert('Need at least 2 players!'); return; }
+  const chains = {}; pids.forEach(pid => chains[pid] = []);
+  await update(ref(db, `rooms/${roomCode}`), {
+    status: 'playing', round: 1,
+    totalRounds: pids.length,
+    playerOrder: pids,
+    chains, submissions: {}
+  });
+};
+
+// ── Room Listener ───────────────────────────────────────────────────────────
+function listenRoom() {
+  if (roomListener) { off(ref(db, `rooms/${roomCode}`), 'value', roomListener); roomListener=null; }
+  roomListener = onValue(ref(db, `rooms/${roomCode}`), snap => {
+    if (!snap.exists()) return;
+    const room = snap.val();
+    players = room.players || {};
+    renderPlayerList();
+    if (room.status === 'playing') {
+      const subs = room.submissions || {};
+      if (!subs[myId]) handleRound(room);
+    } else if (room.status === 'results') {
+      clearInterval(timerInterval);
+      clearInterval(advancePoller);
+      showResults(room);
+    }
+  });
+}
+
+// ── Round Handler ───────────────────────────────────────────────────────────
+function handleRound(room) {
+  clearInterval(timerInterval);
+  hasSubmitted = false;
+  currentRound = room.round;
+  totalRounds = room.totalRounds;
+  const pids = room.playerOrder;
+  const myIndex = pids.indexOf(myId);
+  // Which chain am I working on this round?
+  const chainOwnerId = pids[(myIndex + currentRound - 1) % pids.length];
+  const chain = (room.chains && room.chains[chainOwnerId]) || [];
+  const last = chain.length ? chain[chain.length - 1] : null;
+
+  if (currentRound === 1) {
+    // First round: everyone writes a prompt for their own chain
+    showWriteScreen();
+  } else if (last && last.type === 'drawing') {
+    showGuessScreen(last.content);
+  } else if (last && last.type === 'prompt') {
+    showDrawScreen(last.content);
+  } else {
+    showWriteScreen();
+  }
+}
+
+// ── Screens ─────────────────────────────────────────────────────────────────
+function showWriteScreen() {
+  show('screenWrite');
+  document.getElementById('writeRound').textContent = currentRound;
+  document.getElementById('totalRounds').textContent = totalRounds;
+  const ta = document.getElementById('promptInput'); ta.value = '';
+  ta.oninput = () => document.getElementById('promptCharCount').textContent = ta.value.length + '/100';
+  startTimer(WRITE_TIME, 'writeTimerBar', 'writeTimerText', () => { if (!hasSubmitted) submitPrompt(); });
+}
+
+function showDrawScreen(promptText) {
+  show('screenDraw');
+  document.getElementById('drawRound').textContent = currentRound;
+  document.getElementById('drawTotalRounds').textContent = totalRounds;
+  document.getElementById('drawPromptText').textContent = promptText;
+  undoStack = [];
+  initCanvas(); buildColorGrid();
+  startTimer(DRAW_TIME, 'drawTimerBar', 'drawTimerText', () => { if (!hasSubmitted) submitDrawing(); });
+}
+
+function showGuessScreen(imgData) {
+  show('screenGuess');
+  document.getElementById('guessRound').textContent = currentRound;
+  document.getElementById('guessTotalRounds').textContent = totalRounds;
+  document.getElementById('guessImage').src = imgData;
+  const ta = document.getElementById('guessInput'); ta.value = '';
+  ta.oninput = () => document.getElementById('guessCharCount').textContent = ta.value.length + '/100';
+  startTimer(GUESS_TIME, 'guessTimerBar', 'guessTimerText', () => { if (!hasSubmitted) submitGuess(); });
+}
+
+// ── Submissions ─────────────────────────────────────────────────────────────
+window.submitPrompt = async () => {
+  const val = document.getElementById('promptInput').value.trim();
+  if (!val) { document.getElementById('promptError').style.display='block'; return; }
+  document.getElementById('promptError').style.display='none';
+  clearInterval(timerInterval); hasSubmitted = true;
+  await doSubmit({ type:'prompt', content:val, player:myName });
+};
+
+window.submitDrawing = async () => {
+  clearInterval(timerInterval); hasSubmitted = true;
+  const cv = document.getElementById('drawCanvas');
+  const data = cv.toDataURL('image/jpeg', 0.55);
+  await doSubmit({ type:'drawing', content:data, player:myName });
+};
+
+window.submitGuess = async () => {
+  const val = document.getElementById('guessInput').value.trim();
+  if (!val) { document.getElementById('guessError').style.display='block'; return; }
+  document.getElementById('guessError').style.display='none';
+  clearInterval(timerInterval); hasSubmitted = true;
+  // A guess becomes the next prompt
+  await doSubmit({ type:'prompt', content:val, player:myName });
+};
+
+async function doSubmit(entry) {
+  show('screenWaiting');
+  const snap = await get(ref(db, `rooms/${roomCode}`));
+  const room = snap.val();
+  const pids = room.playerOrder;
+  const myIndex = pids.indexOf(myId);
+  const chainOwnerId = pids[(myIndex + currentRound - 1) % pids.length];
+
+  // Append to chain
+  const chainSnap = await get(ref(db, `rooms/${roomCode}/chains/${chainOwnerId}`));
+  const chain = chainSnap.exists() ? chainSnap.val() : [];
+  await set(ref(db, `rooms/${roomCode}/chains/${chainOwnerId}`), [...chain, entry]);
+
+  // Mark submitted
+  await update(ref(db, `rooms/${roomCode}/submissions`), { [myId]: true });
+
+  // Host polls to advance
+  if (isHost) pollAdvance(pids);
+}
+
+function pollAdvance(pids) {
+  clearInterval(advancePoller);
+  advancePoller = setInterval(async () => {
+    const snap = await get(ref(db, `rooms/${roomCode}`));
+    if (!snap.exists()) { clearInterval(advancePoller); return; }
+    const room = snap.val();
+    const subs = room.submissions || {};
+    if (pids.every(pid => subs[pid])) {
+      clearInterval(advancePoller);
+      if (room.round >= room.totalRounds) {
+        await update(ref(db, `rooms/${roomCode}`), { status:'results', submissions:{} });
+      } else {
+        await update(ref(db, `rooms/${roomCode}`), { round: room.round+1, submissions:{} });
+      }
+    }
+  }, 1500);
+}
+
+// ── Results ─────────────────────────────────────────────────────────────────
+function showResults(room) {
+  show('screenResults');
+  const chains = room.chains || {};
+  const pids = room.playerOrder || Object.keys(chains);
+  const content = document.getElementById('resultsContent');
+  content.innerHTML = '';
+
+  pids.forEach((pid) => {
+    const chain = chains[pid] || [];
+    if (!chain.length) return;
+    const ownerName = (room.players?.[pid]?.name) || 'Player';
+    const sec = document.createElement('div');
+    sec.style.marginBottom = '28px';
+    sec.innerHTML = `<div style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--accent2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)">📖 ${ownerName}'s Chain</div>`;
+    const chainDiv = document.createElement('div');
+    chainDiv.className = 'results-chain';
+    chain.forEach((entry, ei) => {
+      const item = document.createElement('div');
+      item.className = 'chain-item';
+      item.style.animationDelay = (ei*0.08)+'s';
+      if (entry.type === 'drawing') {
+        const img = document.createElement('img');
+        img.src = entry.content; img.alt = 'drawing';
+        item.appendChild(img);
+        const meta = document.createElement('div');
+        meta.className = 'chain-meta';
+        meta.innerHTML = `<span class="chain-type-badge badge-drawing">🎨 Drawing</span><div class="chain-player">by ${entry.player||'?'}</div>`;
+        item.appendChild(meta);
+      } else {
+        const isGuess = ei > 0 && chain[ei-1]?.type === 'drawing';
+        const meta = document.createElement('div');
+        meta.className = 'chain-meta';
+        meta.innerHTML = `<span class="chain-type-badge ${isGuess?'badge-guess':'badge-prompt'}">${isGuess?'🤔 Guess':'✏️ Prompt'}</span><div class="chain-player">by ${entry.player||'?'}</div><div class="chain-content">${entry.content}</div>`;
+        item.appendChild(meta);
+      }
+      chainDiv.appendChild(item);
+    });
+    sec.appendChild(chainDiv);
+    content.appendChild(sec);
+  });
+
+  const btn = document.getElementById('playAgainBtn');
+  btn.classList.toggle('hidden', !isHost);
+}
+
+window.playAgain = async () => {
+  const pids = Object.keys(players);
+  const chains = {}; pids.forEach(pid => chains[pid] = []);
+  await update(ref(db, `rooms/${roomCode}`), {
+    status:'lobby', round:1, chains, submissions:{}, playerOrder:null, totalRounds:null
+  });
+  enterLobby();
+};
+
+window.backToHome = () => {
+  clearInterval(timerInterval); clearInterval(advancePoller);
+  if (roomListener) { off(ref(db, `rooms/${roomCode}`), 'value', roomListener); roomListener=null; }
+  show('screenHome');
+};
+
+// ── Boot ─────────────────────────────────────────────────────────────────────
+show('screenHome');
+</script>
+</body>
+</html>
