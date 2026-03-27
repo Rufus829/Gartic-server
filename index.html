@@ -724,12 +724,15 @@ function listenRoom() {
     renderPlayerList();
 
     if (room.status === 'playing') {
-      // KEY FIX: advance whenever the round number is higher than what we last handled,
-      // regardless of which screen we are on. This unsticks the "hang tight" screen.
-      const roundAdvanced = room.round > currentRound;
-      const notYetWorking = currentScreen !== 'draw' && currentScreen !== 'write' && currentScreen !== 'guess';
       const subs = room.submissions || {};
-      if (roundAdvanced || (notYetWorking && !subs[myId])) {
+      const newRound = room.round > currentRound;
+      const onWaitingScreen = currentScreen === 'waiting';
+      const notStartedYet = currentScreen !== 'draw' && currentScreen !== 'write' && currentScreen !== 'guess' && currentScreen !== 'waiting';
+
+      // Advance to next screen when:
+      // 1. A new round has started (we were on hang-tight and host bumped the round)
+      // 2. We haven't started this round yet (e.g. just joined or came from lobby)
+      if (newRound || notStartedYet) {
         handleRound(room);
       }
     } else if (room.status === 'results') {
@@ -749,8 +752,11 @@ function getMyChainOwner(pids, round) {
 }
 
 function handleRound(room) {
-  const alreadyWorking = currentScreen === 'draw' || currentScreen === 'write' || currentScreen === 'guess';
-  if (room.round === currentRound && alreadyWorking) return;
+  // Only skip if we're already actively working on this exact round
+  // (e.g. a teammate submitted and Firebase fired — don't interrupt us)
+  const alreadyWorkingThisRound = room.round === currentRound &&
+    (currentScreen === 'draw' || currentScreen === 'write' || currentScreen === 'guess');
+  if (alreadyWorkingThisRound) return;
 
   clearInterval(timerInterval);
   hasSubmitted = false;
